@@ -16,7 +16,10 @@ var rp = 1;                     // Radius of a piece
 var JAMMER = 0;
 var PIVOT = 1;
 
-var dragging = false;
+function debug(msg) {
+    var e = document.getElementById("debug");
+    e.innerHTML = msg;
+}
 
 function player(color, type) {
     var e = document.createElement("canvas");
@@ -38,6 +41,7 @@ function player(color, type) {
         var x = (evt.pageX - window.innerWidth/2) / scale;
         var y = (evt.pageY - window.innerHeight/2) / scale;
 
+        debug(x + "<br>" + y);
         e.moveTo(x, y);
     }
 
@@ -116,7 +120,9 @@ function start() {
     canvas = document.getElementById("canvas");
     ctx = canvas.getContext("2d");
 
-    scale = Math.min(window.innerWidth / 100, window.innerHeight / 60);
+    var win_width = window.innerWidth;
+    var win_height = window.innerHeight - 5;   // FF won't let me use all height
+    scale = Math.min(win_width / 100, win_height / 60);
 
     canvas.width = scale * 100;
     canvas.height = scale * 60;
@@ -191,7 +197,7 @@ function start() {
             var p = player(team?"#080":"#f0f", pos);
 
             if (pos == JAMMER) {
-                p.moveTo(halflen-30-rp, ri + rp*(5 + 4*team));
+                p.moveTo(halflen - 30 - rp, ri + rp*(team*4 + 4));
             } else {
                 p.moveTo(halflen-rp - team * (rp*3), ri + rp*(2.5*pos));
             }
