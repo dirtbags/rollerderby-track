@@ -15,13 +15,14 @@ var theta = Math.acos(1 - (curve_d * curve_d) / (2 * ri * ri));
 var rp = 1;                     // Radius of a piece
 var JAMMER = 0;
 var PIVOT = 1;
+var players = [];
 
 function debug(msg) {
     var e = document.getElementById("debug");
     e.innerHTML = msg;
 }
 
-function player(color, type) {
+function player(color, pos) {
     var e = document.createElement("canvas");
     var ctx = e.getContext("2d");
     var body = document.getElementsByTagName("body")[0];
@@ -31,7 +32,7 @@ function player(color, type) {
         var wx = ((x - midpoint) * scale) + window.innerWidth/2;
         var wy = (y - midpoint) * scale + window.innerHeight/2;
 
-        e.pos = [x,y];
+        e.pos = [x, y];
         e.style.left = wx + "px";
         e.style.top = wy + "px";
 
@@ -41,11 +42,19 @@ function player(color, type) {
         var x = (evt.pageX - window.innerWidth/2) / scale;
         var y = (evt.pageY - window.innerHeight/2) / scale;
 
-        debug(x + "<br>" + y);
         e.moveTo(x, y);
     }
 
     function mouseUp() {
+        var l = document.getElementById("link");
+        var positions = [];
+
+        for (var i = 0; i < players.length; i += 1) {
+            positions.push(players[i].pos);
+        }
+
+        l.href = "#" + JSON.stringify(positions);
+
         window.onmousemove = null;
         window.onmouseup = null;
     }
@@ -56,6 +65,7 @@ function player(color, type) {
     }
     e.onmousedown = mouseDown;
 
+    players.push(e);
     body.appendChild(e);
     e.style.position = "absolute";
     e.moveTo(0, 0);
@@ -77,14 +87,14 @@ function player(color, type) {
     ctx.fill();
     ctx.stroke();
 
-    if (type == PIVOT) {
+    if (pos == PIVOT) {
         ctx.fillStyle = "#fff";
         ctx.beginPath();
         ctx.arc(0, 0, rp, tau*31/32, tau* 1/32);
         ctx.arc(0, 0, rp, tau*15/32, tau*17/32);
         ctx.closePath();
         ctx.fill();
-    } else if (type == JAMMER) {
+    } else if (pos == JAMMER) {
         ctx.save();
         ctx.fillStyle = "#fff";
         ctx.beginPath();
@@ -98,6 +108,10 @@ function player(color, type) {
         }
         ctx.fill();
         ctx.restore();
+    } else {
+        ctx.fillStyle = "#fff";
+        ctx.font = midpoint + "px sans-serif";
+        ctx.fillText(pos, -0.5, 0.5);
     }
     return e;
 }
@@ -191,12 +205,23 @@ function start() {
     ctx.stroke();
 
 
+    var positions;
+
+    try {
+        positions = JSON.parse(location.hash.substr(1));
+    }
+    catch (e) {
+        // Pass
+    }
 
     for (var team = 0; team < 2; team += 1) {
         for (var pos = 0; pos < 5; pos += 1) {
             var p = player(team?"#080":"#f0f", pos);
 
-            if (pos == JAMMER) {
+            if (positions) {
+                var coord = positions[team*5 + pos];
+                p.moveTo(coord[0], coord[1]);
+            } else if (pos == JAMMER) {
                 p.moveTo(halflen - 30 - rp, ri + rp*(team*4 + 4));
             } else {
                 p.moveTo(halflen-rp - team * (rp*3), ri + rp*(2.5*pos));
