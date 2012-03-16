@@ -143,7 +143,6 @@ function player(color, pos) {
         ctx.scale(1/scale, 1/scale);
         ctx.fillStyle = "#fff";
         ctx.font = (scale) + "px sans-serif";
-        debug(ctx.font + scale);
         ctx.fillText(pos, -0.25 * scale, 0.25 * scale);
     }
     return e;
