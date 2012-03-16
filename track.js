@@ -56,14 +56,23 @@ function player(color, pos) {
 
     }
 
+    var moved = false;
     function mouseMove(evt) {
         var x = (evt.pageX - window.innerWidth/2) / scale;
         var y = (evt.pageY - canvas.height/2) / scale;
 
         e.moveTo(x, y);
+        moved = true;
     }
 
-    function mouseUp() {
+    function drop() {
+        if (! moved) {
+            e.onmouseup = null;
+            e.onmousedown = null;
+            e.onclick = drop;
+            return;
+        }
+
         var l = document.getElementById("link");
         var positions = [];
 
@@ -73,15 +82,19 @@ function player(color, pos) {
 
         l.href = "#" + JSON.stringify(positions);
 
+        e.style.backgroundColor = "inherit";
         window.onmousemove = null;
-        e.onclick = mouseDown;
+        e.onmousedown = lift;
+        e.onclick = null;
     }
 
-    function mouseDown() {
+    function lift() {
+        moved = false;
         window.onmousemove = mouseMove;
-        e.onclick = mouseUp;
+        e.style.backgroundColor = "rgba(255, 255, 0, 0.5)";
+        e.onmouseup = drop;
     }
-    e.onclick = mouseDown;
+    e.onmousedown = lift;
 
     players.push(e);
     body.appendChild(e);
@@ -89,7 +102,6 @@ function player(color, pos) {
     e.moveTo(0, 0);
 
     // Draw it
-    e.ctx = ctx;
     e.width = scale * (midpoint*2);
     e.height = scale * (midpoint*2);
     ctx.scale(scale, scale);
@@ -127,9 +139,12 @@ function player(color, pos) {
         ctx.fill();
         ctx.restore();
     } else {
+        // android doesn't scale text :<
+        ctx.scale(1/scale, 1/scale);
         ctx.fillStyle = "#fff";
-        ctx.font = midpoint + "px sans-serif";
-        ctx.fillText(pos, -0.5, 0.5);
+        ctx.font = (scale) + "px sans-serif";
+        debug(ctx.font + scale);
+        ctx.fillText(pos, -0.25 * scale, 0.25 * scale);
     }
     return e;
 }
