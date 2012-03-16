@@ -40,11 +40,44 @@ function debug(msg) {
     e.innerHTML = msg;
 }
 
+var b64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,';
+
+function aenc(i) {
+    var neg = i < 0;
+    i = Math.max(Math.min(i, 127), -127);
+    i = Math.round(Math.abs(i) * 16);
+
+    var al = i & 0x3f;
+    var ah = (i >> 6) | (neg?0x20:0);
+
+    return b64.charAt(ah) + b64.charAt(al);
+}
+
+function adec(s) {
+    var ah = b64.indexOf(s[0]);
+    var al = b64.indexOf(s[1]);
+    var neg = (ah & 0x20);
+    var i = ((ah & 0x1f) << 6) | al;
+
+    return i * (neg?-1:1) / 16;
+}
+
 function player(color, pos) {
     var e = document.createElement("canvas");
     var ctx = e.getContext("2d");
     var body = document.getElementsByTagName("body")[0];
     var midpoint = rp + 0.5;
+
+    e.enc = function() {
+        return aenc(e.pos[0]) + aenc(e.pos[1]);
+    }
+
+    e.dec = function(s) {
+        var x = adec(s.substr(0, 2));
+        var y = adec(s.substr(2, 2));
+
+        e.moveTo(x, y);
+    }
 
     e.moveTo = function(x, y) {
         var wx = ((x - midpoint) * scale) + window.innerWidth/2;
@@ -53,7 +86,6 @@ function player(color, pos) {
         e.pos = [x, y];
         e.style.left = wx + "px";
         e.style.top = wy + "px";
-
     }
 
     var moved = false;
@@ -74,15 +106,13 @@ function player(color, pos) {
         }
 
         var l = document.getElementById("link");
-        var positions = [];
+        var positions = '';
 
         for (var i = 0; i < players.length; i += 1) {
-            var v = players[i].pos;
-            positions.push(v[0].toFixed(2));
-            positions.push(v[1].toFixed(2));
+            positions += players[i].enc();
         }
 
-        l.href = "#" + positions.join();
+        l.href = "#" + positions;
 
         e.style.backgroundColor = "inherit";
         window.onmousemove = null;
@@ -229,25 +259,16 @@ function start() {
     ctx.stroke();
 
 
-    var positions;
-
-    try {
-        if (location.hash) {
-            positions = location.hash.substr(1).split(',');
-        }
-    }
-    catch (e) {
-        // Pass
-    }
+    var positions = location.hash.substr(1);
 
     for (var team = 0; team < 2; team += 1) {
         for (var pos = 0; pos < 5; pos += 1) {
             var p = player(team?"#080":"#f0f", pos);
 
             if (positions) {
-                var x = positions[2*(team*5 + pos) + 0];
-                var y = positions[2*(team*5 + pos) + 1];
-                p.moveTo(Number(x), Number(y));
+                var s = positions.substr(4*(team*5 + pos), 4);
+
+                p.dec(s)
             } else if (pos == JAMMER) {
                 p.moveTo(halflen - 30 - rp, ri + rp*(team*4 + 4));
             } else {
