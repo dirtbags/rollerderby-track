@@ -114,7 +114,7 @@ function player(color, pos) {
     ctx.fillStyle = color;
 
     ctx.beginPath();
-    ctx.arc(0, 0, rp, 0, tau);
+    ctx.arc(0, 0, rp, 0, tau, false);
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
@@ -122,8 +122,8 @@ function player(color, pos) {
     if (pos == PIVOT) {
         ctx.fillStyle = "#fff";
         ctx.beginPath();
-        ctx.arc(0, 0, rp, tau*31/32, tau* 1/32);
-        ctx.arc(0, 0, rp, tau*15/32, tau*17/32);
+        ctx.arc(0, 0, rp, tau*31/32, tau* 1/32, false);
+        ctx.arc(0, 0, rp, tau*15/32, tau*17/32, false);
         ctx.closePath();
         ctx.fill();
     } else if (pos == JAMMER) {
@@ -152,8 +152,8 @@ function player(color, pos) {
 
 function drawTrack(ctx) {
     ctx.beginPath();
-    ctx.arc( halflen, -offset, ro, tau*3/4, tau*1/4);
-    ctx.arc(-halflen,  offset, ro, tau*1/4, tau*3/4);
+    ctx.arc( halflen, -offset, ro, tau*3/4, tau*1/4, false);
+    ctx.arc(-halflen,  offset, ro, tau*1/4, tau*3/4, false);
     ctx.lineTo( halflen, -offset - ro);
     ctx.moveTo( halflen, -ri);
     ctx.lineTo(-halflen, -ri);
