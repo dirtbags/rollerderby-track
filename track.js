@@ -77,10 +77,12 @@ function player(color, pos) {
         var positions = [];
 
         for (var i = 0; i < players.length; i += 1) {
-            positions.push(players[i].pos);
+            var v = players[i].pos;
+            positions.push(v[0].toFixed(2));
+            positions.push(v[1].toFixed(2));
         }
 
-        l.href = "#" + JSON.stringify(positions);
+        l.href = "#" + positions.join();
 
         e.style.backgroundColor = "inherit";
         window.onmousemove = null;
@@ -230,7 +232,9 @@ function start() {
     var positions;
 
     try {
-        positions = JSON.parse(location.hash.substr(1));
+        if (location.hash) {
+            positions = location.hash.substr(1).split(',');
+        }
     }
     catch (e) {
         // Pass
@@ -241,8 +245,9 @@ function start() {
             var p = player(team?"#080":"#f0f", pos);
 
             if (positions) {
-                var coord = positions[team*5 + pos];
-                p.moveTo(coord[0], coord[1]);
+                var x = positions[2*(team*5 + pos) + 0];
+                var y = positions[2*(team*5 + pos) + 1];
+                p.moveTo(Number(x), Number(y));
             } else if (pos == JAMMER) {
                 p.moveTo(halflen - 30 - rp, ri + rp*(team*4 + 4));
             } else {
