@@ -134,17 +134,15 @@ function player(color, pos) {
     return e;
 }
 
-function outer(ctx) {
+function drawTrack(ctx) {
     ctx.beginPath();
     ctx.arc( halflen, -offset, ro, tau*3/4, tau*1/4);
     ctx.arc(-halflen,  offset, ro, tau*1/4, tau*3/4);
-    ctx.closePath();
-}
-
-function inner(ctx) {
-    ctx.beginPath();
-    ctx.arc( halflen, 0, ri, tau*3/4, tau*1/4);
-    ctx.arc(-halflen, 0, ri, tau*1/4, tau*3/4);
+    ctx.lineTo( halflen, -offset - ro);
+    ctx.moveTo( halflen, -ri);
+    ctx.lineTo(-halflen, -ri);
+    ctx.arc(-halflen, 0, ri, tau*3/4, tau*1/4, true);
+    ctx.arc( halflen, 0, ri, tau*1/4, tau*3/4, true);
     ctx.closePath();
 }
 
@@ -153,7 +151,7 @@ function start() {
     ctx = canvas.getContext("2d");
 
     var win_width = window.innerWidth;
-    var win_height = window.innerHeight - 5;   // FF won't let me use all height
+    var win_height = window.innerHeight - 20;   // room for pentaly box
     scale = Math.min(win_width / 100, win_height / 60);
 
     canvas.width = scale * 100;
@@ -171,7 +169,7 @@ function start() {
     
     // Fill in track area
     ctx.fillStyle = "#888";
-    outer(ctx);
+    drawTrack(ctx);
     ctx.fill();
 
     // A bunch of lines
@@ -179,10 +177,10 @@ function start() {
     ctx.strokeStyle = "rgba(0, 0, 0, 0.4)";
     ctx.beginPath();
     for (var i = 0; i < 4; i += 1) {
-        ctx.moveTo(halflen - i*10, 0);
+        ctx.moveTo(halflen - i*10, ri);
         ctx.lineTo(halflen - i*10,  ro + offset);
 
-        ctx.moveTo(i*10 - halflen, 0);
+        ctx.moveTo(i*10 - halflen, -ri);
         ctx.lineTo(i*10 - halflen, -ro - offset);
     }
 
@@ -192,7 +190,7 @@ function start() {
         ctx.rotate(j*tau/2);
         for (var i = 0; i < 5; i += 1) {
             ctx.rotate(-theta);
-            ctx.moveTo(0, 0);
+            ctx.moveTo(0, ri);
             ctx.lineTo(0, 12.5 + 15.0);
         }
         ctx.restore();
@@ -203,23 +201,17 @@ function start() {
     ctx.lineWidth =  4/12;
     ctx.strokeStyle = "#000";
     ctx.beginPath();
-    ctx.moveTo(halflen     , 0);
-    ctx.lineTo(halflen     , ro + offset);
-    ctx.moveTo(halflen - 30, 0);
+    ctx.moveTo(halflen     , ri);
+    ctx.lineTo(halflen     , ro - offset);
+    ctx.moveTo(halflen - 30, ri);
     ctx.lineTo(halflen - 30, ro + offset);
     ctx.stroke();
 
-    // Outer oval
+    // Now draw track boundaries
     ctx.lineWidth = 4/12;
     ctx.strokeStyle = "#ff0";
-    outer(ctx);
-    ctx.stroke();
-
-    // Inner oval + clear inside
-    ctx.strokeStyle = "#ff0";
     ctx.fillStyle = "#000";
-    inner(ctx);
-    ctx.fill();
+    drawTrack(ctx);
     ctx.stroke();
 
 

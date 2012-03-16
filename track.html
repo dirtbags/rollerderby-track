@@ -19,10 +19,11 @@
 <html>
     <head>
         <title>WFTDA 2010 Track</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
         <script type="text/javascript" src="track.js"></script>
         <style type="text/css">
 html {
-    background: black;
+    background: black url("../scoreboard/bg.jpg");
     text-align: center;
     color: white;
 }
@@ -31,11 +32,16 @@ html, body, canvas {
     margin: 0;
     border: 0;
 }
-#link {
-    color: #8c8;
+
+#actions {
     position: absolute;
-    left: 1em;
-    top: 1em;
+    left: 0em;
+    top: 0em;
+    text-align: left;
+    opacity: 0.7;
+}
+a {
+    color: #8c8;
 }
 #debug {
     position: absolute;
@@ -43,12 +49,39 @@ html, body, canvas {
     right: 1em;
     background-color: rgba(0, 0, 0, 0.7);
 }
+#info {
+    position: absolute;
+    top: 0em;
+    right: 0em;
+    margin: 0;
+    color: white;
+    opacity: 0.5;
+    text-align: right;
+}
         </style>
+        <script type="application/javascript">
+function about() {
+    var a = document.getElementById("about");
+
+    debug(a.style.display);
+    if (a.style.display == "none") {
+        a.style.display = "block";
+    } else {
+        a.style.display = "none";
+    }
+}
+        </script>
     </head>
     <body>
         <p id="debug"></p>
+        <ul id="actions">
+            <li><a id="link" href="#">link to this position</a></li>
+            <li><a href="http://woozle.org/scoreboard/">free derby scoreboard</a></li>
+        </ul>
         <canvas id="canvas"></canvas>
-        <a id="link" href="#">link to this position</a>
+        <p id="info">
+           <span title="Los Alamos Derby Dames">LADD</a> Track - ©2012 Neale Pickett - <a href="license.txt">GPLv3</a>
+        </p>
     </body>
 </html>
 
