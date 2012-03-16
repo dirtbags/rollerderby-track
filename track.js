@@ -67,6 +67,7 @@ function player(color, pos) {
         var l = document.getElementById("link");
         var positions = [];
 
+        debug('up');
         for (var i = 0; i < players.length; i += 1) {
             positions.push(players[i].pos);
         }
@@ -74,14 +75,14 @@ function player(color, pos) {
         l.href = "#" + JSON.stringify(positions);
 
         window.onmousemove = null;
-        window.onmouseup = null;
+        window.onclick = null;
     }
 
     function mouseDown() {
         window.onmousemove = mouseMove;
-        window.onmouseup = mouseUp;
+        e.onclick = mouseUp;
     }
-    e.onmousedown = mouseDown;
+    e.onclick = mouseDown;
 
     players.push(e);
     body.appendChild(e);
