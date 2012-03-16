@@ -48,7 +48,7 @@ function player(color, pos) {
 
     e.moveTo = function(x, y) {
         var wx = ((x - midpoint) * scale) + window.innerWidth/2;
-        var wy = (y - midpoint) * scale + window.innerHeight/2;
+        var wy = (y - midpoint) * scale + canvas.height/2;
 
         e.pos = [x, y];
         e.style.left = wx + "px";
@@ -58,7 +58,7 @@ function player(color, pos) {
 
     function mouseMove(evt) {
         var x = (evt.pageX - window.innerWidth/2) / scale;
-        var y = (evt.pageY - window.innerHeight/2) / scale;
+        var y = (evt.pageY - canvas.height/2) / scale;
 
         e.moveTo(x, y);
     }
@@ -150,9 +150,7 @@ function start() {
     canvas = document.getElementById("canvas");
     ctx = canvas.getContext("2d");
 
-    var win_width = window.innerWidth;
-    var win_height = window.innerHeight - 20;   // room for pentaly box
-    scale = Math.min(win_width / 100, win_height / 60);
+    scale = Math.min(window.innerWidth / 100, (window.innerHeight - 20) / 60);
 
     canvas.width = scale * 100;
     canvas.height = scale * 60;
